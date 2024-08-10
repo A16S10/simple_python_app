@@ -2,8 +2,8 @@ pipeline {
     agent any
     
     environment {
-        DOCKER_IMAGE = "your-dockerhub-username/your-app-name"
-        DOCKER_CREDS = credentials('dockerhub-creds')
+        DOCKER_IMAGE = "shaikharshad1644/simple_python_app"
+        DOCKER_CREDS = credentials('dockerhub_id')
     }
     
     stages {

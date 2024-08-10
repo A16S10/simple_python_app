@@ -3,7 +3,7 @@ pipeline {
     
     environment {
         DOCKER_IMAGE = "shaikharshad1644/simple_python_app"
-        DOCKER_CREDS = credentials('dockerhub_id')
+        DOCKER_CREDS = credentials('dockerhub-creds')
     }
     
     stages {

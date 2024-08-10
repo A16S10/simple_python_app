@@ -24,7 +24,7 @@ pipeline {
                 script {
                     // Run the Docker container from the built image
                     // Adjust the run options as necessary for your application
-                    def container=docker.image("${DOCKER_IMAGE}:${env.BUILD_NUMBER}").run('-d -p 80:80')
+                    def container=docker.image("${DOCKER_IMAGE}:${env.BUILD_NUMBER}").run('-d -p 5000:5000')
                     echo "Docker container started with ID:${container.id}"
 
                     // Optional: Print a message to confirm that the container is running

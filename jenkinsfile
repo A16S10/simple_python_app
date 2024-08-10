@@ -16,11 +16,10 @@ pipeline {
                     // Optional: Print image details for verification
                     echo "Docker image built: ${DOCKER_IMAGE}:${env.BUILD_NUMBER}"
                 }
-    
             }
         }
-    }
-  stage('Run Docker Container') {
+
+        stage('Run Docker Container') {
             steps {
                 script {
                     // Run the Docker container from the built image
@@ -29,8 +28,10 @@ pipeline {
                     
                     // Optional: Print a message to confirm that the container is running
                     echo "Docker container is running from image ${DOCKER_IMAGE}:${env.BUILD_NUMBER}"
-                } 
+                }
             }
+        }
     }
 
+    
 }

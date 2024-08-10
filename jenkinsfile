@@ -1,48 +1,35 @@
 pipeline {
     agent any
-
+    
     environment {
-        DOCKER_IMAGE = 'dock_images' 
-        DOCKER_TAG = 'latest' 
+        DOCKER_IMAGE = "your-dockerhub-username/your-app-name"
+        DOCKER_CREDS = credentials('dockerhub-creds')
     }
-
+    
     stages {
-        stage('Checkout') {
-            steps {
-                
-                git 'https://github.com/A16S10/simple_python_app.git'
-            }
-        }
-
         stage('Build Docker Image') {
             steps {
                 script {
-                    // Build the Docker image
-                    docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}")
+                    dockerImage = docker.build("${DOCKER_IMAGE}:${env.BUILD_NUMBER}")
                 }
             }
         }
-
-        stage('Run Docker Container') {
+        
+        stage('Push to Docker Hub') {
             steps {
                 script {
-                    // Run the Docker container in detached mode
-                    def appContainer = docker.image("${DOCKER_IMAGE}:${DOCKER_TAG}").run('-p 5000:5000 -d')
-                    // Optional: Wait for a few seconds to allow the container to start
-                    sleep(5)
-                    // Check if the container is running
-                    sh "docker ps"
+                    docker.withRegistry('', DOCKER_CREDS) {
+                        dockerImage.push()
+                    }
                 }
             }
         }
-    }
-
-    post {
-        always {
-            script {
-                // Clean up: Stop and remove the container
-                sh "docker stop \$(docker ps -q --filter ancestor=${DOCKER_IMAGE}:${DOCKER_TAG}) || true"
-                sh "docker rmi ${DOCKER_IMAGE}:${DOCKER_TAG} || true"
+        
+        stage('Run Container') {
+            steps {
+                script {
+                    docker.image("${DOCKER_IMAGE}:${env.BUILD_NUMBER}").run()
+                }
             }
         }
     }

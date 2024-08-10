@@ -1,6 +1,6 @@
 pipeline {
     agent any
-    
+
     environment {
         DOCKER_IMAGE = "shaikharshad1644/simple_python_app"
         DOCKER_CREDS = credentials('dockerhub-creds')
@@ -10,6 +10,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
+                    // Build the Docker image and tag it with the build number
                     dockerImage = docker.build("${DOCKER_IMAGE}:${env.BUILD_NUMBER}")
                 }
             }
@@ -18,8 +19,9 @@ pipeline {
         stage('Push to Docker Hub') {
             steps {
                 script {
-                    docker.withRegistry('', DOCKER_CREDS) {
-                        dockerImage.push()
+                    // Push the image with the build number tag
+                    docker.withRegistry('https://index.docker.io/v1/', DOCKER_CREDS) {
+                        dockerImage.push("${env.BUILD_NUMBER}")
                     }
                 }
             }
@@ -28,7 +30,8 @@ pipeline {
         stage('Run Container') {
             steps {
                 script {
-                    docker.image("${DOCKER_IMAGE}:${env.BUILD_NUMBER}").run()
+                    // Run the container, adjust options as necessary
+                    docker.image("${DOCKER_IMAGE}:${env.BUILD_NUMBER}").run('-d -p 80:80')
                 }
             }
         }

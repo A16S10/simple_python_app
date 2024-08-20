@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = "shaikharshad1644/simple_python_app"
-        DOCKER_CREDS = credentials('dockerhub-creds')  // Ensure this ID matches the one in Jenkins
+        DOCKER_CREDS = credentials('dockerhub-creds')  
     }
 
     stages {
@@ -13,7 +13,7 @@ pipeline {
                     // Build the Docker image with a tag based on the build number
                     dockerImage = docker.build("${DOCKER_IMAGE}:${env.BUILD_NUMBER}")
 
-                    // Optional: Print image details for verification
+                    
                     echo "Docker image built: ${DOCKER_IMAGE}:${env.BUILD_NUMBER}"
                 }
             }
@@ -23,11 +23,11 @@ pipeline {
             steps {
                 script {
                     // Run the Docker container from the built image
-                    // Adjust the run options as necessary for your application
+                    
                     def container=docker.image("${DOCKER_IMAGE}:${env.BUILD_NUMBER}").run('-d -p 5000:5000')
                     echo "Docker container started with ID:${container.id}"
 
-                    // Optional: Print a message to confirm that the container is running
+                    // Print a message to confirm that the container is running
                     echo "Docker container is running from image ${DOCKER_IMAGE}:${env.BUILD_NUMBER}"
 
                     // Fetch and display logs from the running container
